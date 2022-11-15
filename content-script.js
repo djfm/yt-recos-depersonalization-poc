@@ -1,22 +1,26 @@
 const EXTENSION_ROOT_ID = 'djfm-extension-root';
 const IFRAME_ID='djfm-extension-iframe';
 const HASH_SIGNAL = 'djfm-extension-host';
+const RECOMMENDATIONS_RECEIVED = 'RECOMMENDATIONS_RECEIVED';
 
-const initHostIframe = () => {
+const initHost = () => {
   window.addEventListener('message', (event) => {
-    if (event.data === 'iframe loaded') {
-      console.log('message received', event);
-      alert('message received');
+    if (event.data.type === RECOMMENDATIONS_RECEIVED) {
+      console.log('recommendations received', event.data);
+      console.log({ html: event.data.html });
+      alert('recommendations received');
     }
   });
 
   const div = document.createElement('div');
   div.id=EXTENSION_ROOT_ID;
   div.style.position = 'fixed';
+  div.style.top = '500px';
   div.style.bottom = '10px';
-  div.style.right = '10px';
-  div.style.width = '100px';
-  div.style.height = '100px';
+  div.style.left = '0px';
+  div.style.right = '0px';
+  // div.style.width = '100px';
+  // div.style.height = '100px';
   div.style.zIndex = 5000;
   div.style.backgroundColor = 'red';
   div.style.textAlign = 'center';
@@ -40,7 +44,15 @@ const initHostIframe = () => {
 };
 
 const initIFrame = () => {
-  parent.postMessage('iframe loaded', '*');
+  const recommendationURLsSelector = 'ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer a#thumbnail';
+  const recommendationURLs = document.querySelectorAll(recommendationURLsSelector);
+  const recommendationURLsArray = Array.from(recommendationURLs).map((el) => el.href);
+  const html = document.documentElement.outerHTML;
+  parent.postMessage({
+    type: RECOMMENDATIONS_RECEIVED,
+    data: recommendationURLsArray,
+    html,
+  }, '*');
 };
 
 const initialize = () => {
@@ -49,7 +61,7 @@ const initialize = () => {
   const isHost = window.location.hash !== `#${HASH_SIGNAL}`;
 
   if (isHost) {
-    initHostIframe();
+    initHost();
 
     const dot = document.createElement('div');
     dot.style.position = 'absolute';
