@@ -2,7 +2,14 @@ const EXTENSION_ROOT_ID = 'djfm-extension-root';
 const IFRAME_ID='djfm-extension-iframe';
 const HASH_SIGNAL = 'djfm-extension-host';
 
-const injectIFrame = () => {
+const initHostIframe = () => {
+  window.addEventListener('message', (event) => {
+    if (event.data === 'iframe loaded') {
+      console.log('message received', event);
+      alert('message received');
+    }
+  });
+
   const div = document.createElement('div');
   div.id=EXTENSION_ROOT_ID;
   div.style.position = 'fixed';
@@ -27,12 +34,13 @@ const injectIFrame = () => {
 
   hiddenIframe.addEventListener('load', () => {
     console.log('iframe loaded');
-    const iframeDocument = hiddenIframe.contentDocument;
-    const iframeBody = iframeDocument.body;
-    iframeBody.style.backgroundColor = 'orange';
   });
 
   document.body.appendChild(div);
+};
+
+const initIFrame = () => {
+  parent.postMessage('iframe loaded', '*');
 };
 
 const initialize = () => {
@@ -41,7 +49,7 @@ const initialize = () => {
   const isHost = window.location.hash !== `#${HASH_SIGNAL}`;
 
   if (isHost) {
-    injectIFrame();
+    initHostIframe();
 
     const dot = document.createElement('div');
     dot.style.position = 'absolute';
@@ -55,6 +63,8 @@ const initialize = () => {
     dot.style.zIndex = 5001;
     document.body.appendChild(dot);
   } else {
+    initIFrame();
+
     const dot = document.createElement('div');
     dot.style.position = 'absolute';
     dot.style.top = '5px';
