@@ -43,5 +43,16 @@ chrome.runtime.onInstalled.addListener(() => {
             onVideoChanged(message.url).then(sendResponse);
             return true;
         }
+
+        if (message.type === 'GET_RECOMMENDATIONS') {
+            console.log('ServiceWorker onMessage GET_RECOMMENDATIONS:', message);
+
+            const { initialDataScript } = message;
+
+            eval(initialDataScript);
+
+            sendResponse({ ytInitialData: globalThis.ytInitialData });
+            return true;
+        }
     });
 });
