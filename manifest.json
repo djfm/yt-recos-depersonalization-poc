@@ -3,7 +3,8 @@
 "version": "1.0",
 "manifest_version": 3,
 "background": {
-    "service_worker": "extension-sw.js"
+    "service_worker": "extension-sw.js",
+    "type": "module"
 },
 "content_scripts": [
     {
