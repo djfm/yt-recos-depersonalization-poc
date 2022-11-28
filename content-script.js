@@ -15,12 +15,12 @@ const initHost = () => {
   const div = document.createElement('div');
   div.id=EXTENSION_ROOT_ID;
   div.style.position = 'fixed';
-  div.style.top = '500px';
+  // div.style.top = '500px';
   div.style.bottom = '10px';
-  div.style.left = '0px';
-  div.style.right = '0px';
-  // div.style.width = '100px';
-  // div.style.height = '100px';
+  // div.style.left = '0px';
+  div.style.right = '10px';
+  div.style.width = '100px';
+  div.style.height = '100px';
   div.style.zIndex = 5000;
   div.style.backgroundColor = 'red';
   div.style.textAlign = 'center';
@@ -47,7 +47,7 @@ const initIFrame = () => {
   const recommendationURLsSelector = 'ytd-watch-next-secondary-results-renderer ytd-compact-video-renderer a#thumbnail';
   const recommendationURLs = document.querySelectorAll(recommendationURLsSelector);
   const recommendationURLsArray = Array.from(recommendationURLs).map((el) => el.href);
-  const html = document.documentElement.outerHTML;
+  const html = document.outerHTML;
   parent.postMessage({
     type: RECOMMENDATIONS_RECEIVED,
     data: recommendationURLsArray,
