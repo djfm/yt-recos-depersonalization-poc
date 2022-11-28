@@ -1,8 +1,36 @@
 const onVideoChanged = async (url) => {
     console.log('ServiceWorker onVideoChanged:', url);
 
+    const resp = await fetch(url, {
+        credentials: 'omit',
+    });
+
+    const html = await resp.text();
+
+    const exp =/{\"videoId\":\"(.*?)\"}/g;
+
+    const matches = [...html.matchAll(exp)];
+    console.log({  matches });
+
+    const beforeQuote = /^([^"]+)"/;
+
+    const cleanMatches = matches.map((match) => {
+        const m = match[1].match(beforeQuote);
+
+        if (m) {
+            return m[1];
+        }
+
+        return '';
+    });
+
+    const uniqueMatches = [...new Set(cleanMatches)];
+
     return {
         url,
+        html,
+        matches,
+        uniqueMatches,
     }
 };
 
