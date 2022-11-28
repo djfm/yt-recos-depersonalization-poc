@@ -26,8 +26,16 @@ const onNavigatedToVideoPage = async () => {
 
   console.log('The script with initial data:', initialDataScript);
 
-  console.log('Sending the script to the background page for evaluation...');
-  const recommendations = await chrome.runtime.sendMessage({ type: 'GET_RECOMMENDATIONS', initialDataScript });
+  if (!initialDataScript) {
+    console.error('Could not find the script with initial data.');
+  }
+
+  const json = initialDataScript.textContent.replace('var ytInitialData = ', '').replace(';', '');
+  const initialData = JSON.parse(json);
+
+  const recommendations = initialData.contents.twoColumnWatchNextResults.secondaryResults.secondaryResults.results;
+
+  console.log('Initial data:', initialData);
   console.log('Recommendations:', recommendations);
 };
 
