@@ -1,15 +1,21 @@
-const { href } = window.location;
+const { href: pageHref } = window.location;
 
-const onNavigatedToVideoPage = async () => {
+const onNavigatedToVideoPage = async (href) => {
   console.log('Navigated to video page');
   console.log('href:', href);
 
+  /*
   console.log('Sending message to background script...');
   const resp = await chrome.runtime.sendMessage({ type: 'ON_VIDEO_CHANGED', url: href });
   console.log('Response from background script:', resp);
+  */
+
+  const html = await (await fetch(href, {
+    credentials: 'omit',
+  })).text();
 
   const parser = new DOMParser();
-  const doc = parser.parseFromString(resp.html, 'text/html');
+  const doc = parser.parseFromString(html, 'text/html');
   const scripts = [...doc.querySelectorAll('script')];
 
   console.log('Got the following scripts without cookies:', scripts);
@@ -53,6 +59,6 @@ const onNavigatedToVideoPage = async () => {
   console.log('Recommendations:', recommendations);
 };
 
-if (/\?v=[^/]+$/.test(href)) {
-  onNavigatedToVideoPage();
+if (/\?v=[^/]+$/.test(pageHref)) {
+  onNavigatedToVideoPage(pageHref);
 }
